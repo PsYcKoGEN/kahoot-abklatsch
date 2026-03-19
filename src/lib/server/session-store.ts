@@ -6,7 +6,7 @@ import {
   QuizData,
   READING_PHASE_MS,
 } from "@/lib/shared/quiz-types";
-import { redis } from "@/lib/server/redis";
+import { getRedis } from "@/lib/server/redis";
 
 const SESSION_PREFIX = "kahoot-abklatsch:session:";
 const SESSION_TTL_SECONDS = 60 * 60 * 12;
@@ -17,6 +17,8 @@ function sessionKey(code: string) {
 }
 
 export async function saveSession(session: ActiveSession) {
+  const redis = getRedis();
+
   await redis.set(sessionKey(session.code), session, {
     ex: SESSION_TTL_SECONDS,
   });
@@ -25,6 +27,7 @@ export async function saveSession(session: ActiveSession) {
 }
 
 export async function getSession(code: string) {
+  const redis = getRedis();
   const session = await redis.get<ActiveSession>(sessionKey(code.toUpperCase()));
 
   if (!session) {
@@ -35,6 +38,7 @@ export async function getSession(code: string) {
 }
 
 export async function generateUniqueSessionCode() {
+  const redis = getRedis();
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
   for (let attempt = 0; attempt < 20; attempt++) {

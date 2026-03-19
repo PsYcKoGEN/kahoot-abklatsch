@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function PlayerPage() {
+function PlayerPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -146,5 +146,13 @@ export default function PlayerPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function PlayerPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 24 }}>Lade...</div>}>
+      <PlayerPageContent />
+    </Suspense>
   );
 }
